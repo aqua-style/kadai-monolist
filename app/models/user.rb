@@ -13,6 +13,11 @@ class User < ApplicationRecord
   has_many :want_items, through: :wants, class_name: 'Item', source: :item #wantしたitemだけを取得
 
 
+  has_many :haves, class_name: 'Have' #これでtype='have'なownershipsを取得
+  has_many :aiueo_items, through: :haves, class_name: 'Item', source: :item #havesによりhaveしたitemだけを取得
+  
+  
+  #####want用のメソッド
   def want(item)
     self.wants.find_or_create_by(item_id: item.id)
   end
@@ -26,5 +31,20 @@ class User < ApplicationRecord
     self.want_items.include?(item)
   end
   
-  
+
+  #####have用のメソッド
+  def item_motu(item)
+    self.haves.find_or_create_by(item_id: item.id)
+  end
+
+  def item_suteru(item)
+    aru_item = self.haves.find_by(item_id: item.id)
+    aru_item.destroy if aru_item
+  end
+
+  def aru?(item)
+    self.aiueo_items.include?(item)
+  end
+
+
 end
